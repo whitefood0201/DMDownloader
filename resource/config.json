@@ -1,0 +1,15 @@
+{ 
+    "bottom_filter": false, 
+    "top_filter": false, 
+    "open_zhconv": true, 
+    "offset": 1000, 
+    "line_count": 5, 
+    "bottom_offset": 3, 
+    "font_size": 50, 
+    "resolution": "1920*1080", 
+    "font_name": "微软雅黑", 
+    "ass_head": "./resource/head.txt", 
+    "suffix": ".dm-chs", 
+    "user_agent": "", 
+    "cookie": "" 
+}
