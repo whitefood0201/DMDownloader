@@ -67,7 +67,7 @@ zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中
 <!--TODO：开个新文件做详细说明-->
 
 默认配置：
-```json
+```
 { 
     "bottom_filter": false, // 是否开启底部弹幕过滤。
     "top_filter": false,  // 顶部弹幕过滤。
@@ -88,7 +88,7 @@ zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中
 收藏栏文件：`resource/favorites.json`，其内容将被加载到主界面上，以便快速访问。
 
 格式为:
-```json
+```
 {
     "名称1": "网址1",
     "名称2": "网址2",
