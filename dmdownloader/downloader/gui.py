@@ -2,7 +2,7 @@ import tkinter.ttk as ttk
 import tkinter.messagebox as msg
 import tkinter as tk
 import dmdownloader.downloader.asyntk as asyntk
-import dmdownloader.downloader.service as service
+import dmdownloader.downloader.sitelib.service as service
 
 FAVORITES_PATH = "./resource/favorites.json"
 CONFIG_PATH = "./resource/config.json"

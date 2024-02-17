@@ -28,14 +28,9 @@ Python 安装：
 - [Python3 环境搭建 | 菜鸟教程](https://www.runoob.com/python3/python3-install.html)
 - 安装即可，不需要配置环境变量。
 
-Requests 安装方式，必须安装：
-1. 打开 Python 安装目录下的`Scripts`文件夹。
-2. 打开 cmd 执行，`pip install requests`
-
 zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中的`open_zhconv`设为`false`：
 1. 打开 Python 安装目录下的`Scripts`文件夹。
 2. 打开 cmd 执行，`pip install zhconv`
-
 
 ## 注意
 

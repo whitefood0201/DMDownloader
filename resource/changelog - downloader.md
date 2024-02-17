@@ -9,6 +9,11 @@
 ### Changed
 - 与`converter`解耦合
 
+## [0.2.0] - 2024/02/17
+
+### Changed
+- 移除 Request 库，改用 Python 内置 urllib 库
+
 ## [0.1.0] - 2024/02/13
 
 ### Added

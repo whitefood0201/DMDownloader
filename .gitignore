@@ -1,1 +1,4 @@
 *.pyc
+test.py
+/log
+/downloads
