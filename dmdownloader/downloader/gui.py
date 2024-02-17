@@ -6,10 +6,25 @@ import dmdownloader.downloader.service as service
 
 FAVORITES_PATH = "./resource/favorites.json"
 CONFIG_PATH = "./resource/config.json"
+FONT_NAME = "微软雅黑"
 
 class DownloaderApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+
+        # 载入config
+        try:
+            self.app_config = service.load_json(CONFIG_PATH)
+        except IOError:
+            msg.showerror(title="错误", message="配置文件载入错误")
+            exit(1)
+
+        # 载入favorites
+        favorites = {}
+        try:
+            favorites = service.load_json(FAVORITES_PATH)
+        except IOError:
+            pass
 
         # 自身属性
         self.title("DanmakuDownloader")
@@ -20,25 +35,18 @@ class DownloaderApp(tk.Tk):
         # 样式管理
         style = ttk.Style()
         style.theme_use("clam")
-        style.configure(".", font="微软雅黑 14", background="gray")
-        style.configure("title.TLabel", font="微软雅黑 22 bold", foreground="light blue", background="gray")
-        style.configure("waiting.TLabel", font="微软雅黑 36", foreground="black", background="gray")
-        style.configure("anime_title.TLabel", font="微软雅黑 26", foreground="white", background="gray")
-        style.configure("ep_title.TLabel", font="微软雅黑 16", foreground="light gray", background="gray")
-        style.configure("TButton", font="微软雅黑 14", background="white")
-        style.configure("favortes.TButton", font="微软雅黑 12", background="white")
-        style.configure("ep_button.TButton", font="微软雅黑 14", foreground="black", background="white")
-        #style.configure("ep_button_success.TButton", font="微软雅黑 14")
+        style.configure(".", font=(FONT_NAME, 14), background="gray")
+        style.configure("title.TLabel", font=(FONT_NAME, 22, "bold"), foreground="light blue", background="gray")
+        style.configure("waiting.TLabel", font=(FONT_NAME, 36), foreground="black", background="gray")
+        style.configure("anime_title.TLabel", font=(FONT_NAME, 26), foreground="white", background="gray")
+        style.configure("ep_title.TLabel", font=(FONT_NAME, 16), foreground="light gray", background="gray")
+        style.configure("TButton", font=(FONT_NAME, 14), background="white")
+        style.configure("favortes.TButton", font=(FONT_NAME, 12), background="white")
+        style.configure("ep_button.TButton", font=(FONT_NAME, 14), foreground="black", background="white")
+        #style.configure("ep_button_success.TButton", font=(FONT_NAME, 14))
         style.map('ep_button_success.TButton', background=[('!disabled', 'lime')])
-        #style.configure("ep_button_failure.TButton", font="微软雅黑 14")
+        #style.configure("ep_button_failure.TButton", font=(FONT_NAME, 14))
         style.map('ep_button_failure.TButton', background=[('!disabled', 'red')])
-
-        # 载入favorites
-        favorites = {}
-        try:
-            favorites = service.load_json(FAVORITES_PATH)
-        except IOError:
-            pass
 
         # 界面切换处理
         container = ttk.Frame(self)
@@ -59,13 +67,6 @@ class DownloaderApp(tk.Tk):
         # 初始化 tk 异步任务处理对象
         self.asyn_event = asyntk.AsyncEvent(self)
 
-        # 异步载入 config 文件
-        def on_success(result, app=self):
-            app.config = result
-        def on_failure(exception, app=self):
-            msg.showerror(title="错误", message="配置文件载入错误")
-        self.asyn_event.submit(service.load_json, CONFIG_PATH).then(on_success).catch(on_failure)
-        
     def show_frame(self, page_name):
         """ 切换页面 """
         frame = self.frames[page_name]
@@ -111,7 +112,7 @@ class MainFrame(ttk.Frame):
         fra01 = ttk.Frame(self)
 
         text = tk.StringVar()
-        self.eny = ttk.Entry(fra01, width=75, font=("微软雅黑", 10), textvariable=text)
+        self.eny = ttk.Entry(fra01, width=75, font=(FONT_NAME, 10), textvariable=text)
 
         def handler(self=self, url=text):
             self.search(text.get())
@@ -141,7 +142,7 @@ class MainFrame(ttk.Frame):
             msg.showerror(title="错误", message="\n".join(exception.args))
             app.show_frame("main_frame")
 
-        self.controller.asyn_event.submit(service.search, url, self.controller.config).then(on_success).catch(on_failure)
+        self.controller.asyn_event.submit(service.search, url, self.controller.app_config).then(on_success).catch(on_failure)
         self.controller.show_frame("waiting_frame")
 
 
@@ -196,7 +197,7 @@ class AnimeFrame(ttk.Frame):
             msg.showerror(title="错误", message="\n".join(exception.args))
             button.config(style="ep_button_failure.TButton")
 
-        self.controller.asyn_event.submit(service.download, epid, site, ofile, self.controller.config).then(on_success).catch(on_failure)
+        self.controller.asyn_event.submit(service.download, epid, site, ofile, self.controller.app_config).then(on_success).catch(on_failure)
 
 
 class WaitingFrame(ttk.Frame):

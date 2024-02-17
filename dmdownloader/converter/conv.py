@@ -38,11 +38,11 @@ def convert(cfg: dict, gui_config: dict=None) -> None:
     logging.info('转换完毕: "%(ifile)s" -----> "%(ofile)s"' % config)
 
 def main():
-    # init logging
-    if not os.path.exists("./log/"): os.mkdir("./log/")
-    now = datetime.now()
-    filename = "./log/" + now.strftime("%d-%m-%Y_%H-%M-%S") + ".log"
-    logging.basicConfig(filename=filename, filemode="a", encoding="GBK")
+    #''' logging '''
+    #if not os.path.exists("./log/"): os.mkdir("./log/")
+    #now = datetime.now()
+    #filename = "./log/" + now.strftime("%d-%m-%Y_%H-%M-%S") + ".log"
+    #logging.basicConfig(filename=filename, filemode="a", encoding="GBK")
 
     cfg = argparser.get_args(sys.argv)
     if(cfg == -1):

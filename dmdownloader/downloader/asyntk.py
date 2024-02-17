@@ -2,7 +2,7 @@
 Author: 燕十七
 From: https://www.cnblogs.com/libitum/p/14848615.html
 
-The module for asynchronous running tasks in Tk GUI.
+The util for asyn tasks in Tk GUI.
 """
 import tkinter as tk
 import time as time
