@@ -36,6 +36,7 @@ zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中
 1. 打开 Python 安装目录下的`Scripts`文件夹。
 2. 打开 cmd 执行，`pip install zhconv`
 
+依赖安装完成后，双击运行`dmDownloader.pyw`即可。
 
 ## 注意
 
