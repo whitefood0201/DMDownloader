@@ -1,4 +1,6 @@
-*.pyc
-test.py
 /log
 /downloads
+*.pyc
+test.py
+test.json
+test.dm-chs.ass

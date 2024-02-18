@@ -14,11 +14,14 @@ class Converter:
         for dmk in self.danmakus:
             if dmk.type > 3: continue
             display = ds.display_factor(self.config, dmk)
+
             track_index, offset = collision.detect(display)
             if offset > self.config["offset"]: continue
-            # update 
-            display.relayout(offset, track_index)
-            collision.update(dmk.type, track_index, display.get_leave_collision_time())
+
+            # update, line = tarck_index+ 1
+            display.relayout(offset, track_index+1)
+            collision.update(dmk.type, track_index, display.leave_collision_time())
+
             dias.append(Dialogue(display))
         
         self.dialogues = dias
