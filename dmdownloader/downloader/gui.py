@@ -97,6 +97,7 @@ class MainFrame(ttk.Frame):
     """ 主界面，提供搜索栏和收藏栏 """
     def __init__(self, master=None, controller=None, favorites=None):
         super().__init__(master, relief="sunken")
+        self.master = master
         self.controller = controller
 
         self.get_blank_frame().pack(side="top")

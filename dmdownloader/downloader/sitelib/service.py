@@ -44,10 +44,6 @@ def download(epid: str, site:str, ofile: str, config: dict) -> None:
     headers["User-Agent"] = config["user_agent"]
     headers["Cookie"] = config["cookie"]
 
-    # for test
-    #headers["User-Agent"] = ""
-    #headers["Cookie"] = ""
-
     if site == "baha":
         gui_config = baha_download(epid, ofile, headers)
     elif site == "bili":

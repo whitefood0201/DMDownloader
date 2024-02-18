@@ -4,7 +4,7 @@
     "open_zhconv": true, 
     "offset": 1000, 
     "line_count": 5, 
-    "bottom_offset": 3, 
+    "bottom_offset": 0, 
     "font_size": 50, 
     "resolution": "1920*1080", 
     "font_name": "微软雅黑", 
