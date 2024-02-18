@@ -32,6 +32,8 @@ zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中
 1. 打开 Python 安装目录下的`Scripts`文件夹。
 2. 打开 cmd 执行，`pip install zhconv`
 
+依赖安装完成后，双击运行`dmDownloader.pyw`即可。
+
 ## 注意
 
 ### 巴哈姆特弹幕获取
@@ -62,7 +64,7 @@ zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中
 <!--TODO：开个新文件做详细说明-->
 
 默认配置：
-```json
+```
 { 
     "bottom_filter": false, // 是否开启底部弹幕过滤。
     "top_filter": false,  // 顶部弹幕过滤。
@@ -83,7 +85,7 @@ zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中
 收藏栏文件：`resource/favorites.json`，其内容将被加载到主界面上，以便快速访问。
 
 格式为:
-```json
+```
 {
     "名称1": "网址1",
     "名称2": "网址2",
