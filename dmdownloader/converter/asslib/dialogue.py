@@ -1,4 +1,5 @@
 # 描述ass中的dialogue
+
 class Dialogue:
 
     TEMPLATE = "Dialogue: {},{},{},Default,,0000,0000,0000,,{}{}"
@@ -12,9 +13,9 @@ class Dialogue:
         self.paramenter = self.get_parameter()
         
     def get_parameter(self):        
-        params = []
         display = self.display
-
+        
+        params = []
         # Color 参数
         color = display.danmaku.color
         if "ffffff" != color.lower(): # 全白(ffffff)不需要添加
@@ -22,12 +23,14 @@ class Dialogue:
 
         if self.type == 0: # 滚动弹幕
             # move 参数
-            params.append("\\move(%d, %d, %d, %d)" % (display.start_point + display.end_point))
+            x1, x2 = display.horizontal
+            y1, y2 = display.vertical
+            params.append("\\move(%d, %d, %d, %d)" % (x1, y1, x2, y2))
         elif self.type in [1, 2]: # 顶底弹幕
             # pos 参数
-            params.append("\\pos(%d, %d)" % display.start_point)
-            # align 参数
-            params.append("\\a%d" % (self.type == 1 and 2 or 6))
+            x1, x2 = display.horizontal
+            y1, y2 = display.vertical
+            params.append("\\pos(%d, %d)" % (x1, y1))
 
         return "".join(params)
         

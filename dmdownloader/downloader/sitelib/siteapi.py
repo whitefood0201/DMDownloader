@@ -1,6 +1,5 @@
 # 封装网站api
-import requests
-import json
+import urllib.request, urllib.parse, urllib.error
 import logging
 
 BAHA_ANIMEINFO = "https://api.gamer.com.tw/mobile_app/anime/v2/video.php"
@@ -11,38 +10,38 @@ BILI_ANIMEINFO = ""
 BILI_DANMAKU = ""
 
 
-def get_baha_animeinfo(sn, headers) -> dict:
+def get_baha_animeinfo(sn, headers) -> str:
     url = BAHA_ANIMEINFO + "?sn={}".format(sn)
     
     try:
-        resp = requests.post(url, headers=headers, timeout=5).text
-        ret = json.loads(resp)
-    except (requests.exceptions.RequestException):
-        logging.warning("api: connection failed")
+        response = urllib.request.urlopen(url=url, timeout=10)
+        ret = response.read().decode("UTF-8")
+    except urllib.error.HTTPError:
+        logging.warning("api: {}: response code 403, check baha cookie".format(BAHA_ANIMEINFO))
+        raise ValueError("Baha api 请求被拒，请检查cookie")
+    except urllib.error.URLError:
+        logging.warning("api: {}: connection failed".format(BAHA_DANMAKU))
         raise ConnectionError("网址错误或网络异常")
-    except json.JSONDecodeError:
-        logging.warning("api: check baha cookie")
-        raise ValueError("api传回异常数据，请检查cookie")
 
     return ret
     
 
 def get_baha_danmaku(sn, headers) -> str:
-    data = {}
-    data["sn"] = sn
+    data = { "sn": sn }
+    data = bytes(urllib.parse.urlencode(data), encoding="UTF-8")
 
     try:
-        resp = requests.post(BAHA_DANMAKU, data=data, headers=headers, timeout=5).text
-        # 检测
-        json.loads(resp)
-    except (requests.exceptions.RequestException):
-        logging.warning("api: connection failed")
-        raise ConnectionError("网络异常")
-    except json.JSONDecodeError:
-        logging.warning("api: check baha cookie")
-        raise ValueError("api传回异常数据，请检查cookie")
+        req = urllib.request.Request(url=BAHA_DANMAKU, data=data, headers=headers)
+        response = urllib.request.urlopen(req, timeout=10)
+        ret = response.read().decode("UTF-8")
+    except urllib.error.HTTPError:
+        logging.warning("api: {}: response code 403, check baha cookie".format(BAHA_DANMAKU))
+        raise ValueError("Baha api 请求被拒，请检查cookie")
+    except urllib.error.URLError:
+        logging.warning("api: {}: connection failed".format(BAHA_DANMAKU))
+        raise ConnectionError("网址错误或网络异常")
     
-    return resp
+    return ret
 
 def get_bili_animeinfo(epid, header):
     """ TODO """

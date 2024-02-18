@@ -1,4 +1,6 @@
 # 碰撞检测
+from dmdownloader.converter.asslib.display import DisplayBase
+
 class Collision:
 
     def __init__(self, line_count):
@@ -8,7 +10,8 @@ class Collision:
             [0]*line_count, # buttom
         ]
 
-    def detect(self, display) -> tuple[int, int]:
+    def detect(self, display: DisplayBase) -> tuple[int, int]:
+        """ 碰撞检测 """
         track = self.tracks[display.danmaku.type]
         leave_collision_times = []
 

@@ -4,7 +4,7 @@ from datetime import datetime
 import dmdownloader.downloader.gui as gui
 
 def main():
-    #""" init loggin """
+    """ init loggin """
     #if not os.path.exists("./log/"): os.mkdir("./log/")
     #now = datetime.now()
     #filename = ".\\log\\" + now.strftime("%d-%m-%Y_%H-%M-%S") + ".log"

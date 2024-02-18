@@ -6,7 +6,7 @@ CONFIG = {
     "open_zhconv": True,
     "offset": 1000, # in ms
     "line_count": 5,
-    "bottom_offset": 1, # 底部弹幕向上偏移n行
+    "bottom_offset": 0, # 底部弹幕向上偏移n行
     "font_size": 50,
     "resolution": "1920*1080",
     "font_name": "微软雅黑",

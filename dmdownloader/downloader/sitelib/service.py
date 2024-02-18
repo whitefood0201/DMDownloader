@@ -27,8 +27,8 @@ def search(url: str, config: dict) -> dict:
 
 def baha_search(sn: str, headers: dict) -> dict:
     """ search in baha """
-    json = api.get_baha_animeinfo(sn, headers)
-    return paser.parse_baha_anime_info(json)
+    ret = json.loads(api.get_baha_animeinfo(sn, headers))
+    return paser.parse_baha_anime_info(ret)
 
 def bili_search(epid: str, headers: dict) -> dict:
     """ TODO """
