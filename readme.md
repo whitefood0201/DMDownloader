@@ -2,9 +2,7 @@
 
 <!-- TODO：分页 -->
 
-<!--BiliBili及-->
-
-巴哈姆特動畫瘋番剧弹幕下载。
+BiliBili及巴哈姆特動畫瘋番剧弹幕下载。
 
 内置弹幕转 ass 字幕工具。以便视频播放器加载。
 
@@ -21,14 +19,14 @@
 
 ## 下载安装
 
-使用 Python3 编写。依赖了 Requests 和 zhconv。
+使用 Python3 编写。依赖了 zhconv 用于繁简转换（可关闭）。
 
 Python 安装：
 - [安装Python - 廖雪峰的官方网站](https://www.liaoxuefeng.com/wiki/1016959663602400/1016959856222624)
 - [Python3 环境搭建 | 菜鸟教程](https://www.runoob.com/python3/python3-install.html)
 - 安装即可，不需要配置环境变量。
 
-zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中的`open_zhconv`设为`false`：
+zhconv 繁简转换库。如果不需要可以不安装，但要将`config.json`中的`open_zhconv`设为`false`：
 1. 打开 Python 安装目录下的`Scripts`文件夹。
 2. 打开 cmd 执行，`pip install zhconv`
 
@@ -71,14 +69,15 @@ zhconv 安装方式。如果不需要可以不安装，但要将`config.json`中
     "open_zhconv": true,  // 是否开启繁转简。
     "offset": 1000,  // 偏移上限
     "line_count": 5, // 行数限制
-    "bottom_offset": 3, // 底部偏移，单位为行。
+    "bottom_offset": 0, // 底部偏移，单位为行。
     "font_size": 50, // 字体大小
     "resolution": "1920*1080", // 分辨率，不需要跟视频实际分辨率一致，播放器会执行缩放。
     "font_name": "微软雅黑", // 字体名称
     "ass_head": "./resource/head.txt", // ass头文件的模板
     "suffix": ".dm-chs", // 弹幕文件后缀，最终弹幕文件名将为{弹幕名称}{后缀}.ass
-    "cookie": "", // 巴哈姆特所需
-    "user_agent": "" // 同上
+    "download_origin": false, // 是否下载未经转换的弹幕源文件
+    "cookie": "", // 巴哈姆特所需cookie
+    "user_agent": "" // 巴哈姆特所需UA
 }
 ```
 

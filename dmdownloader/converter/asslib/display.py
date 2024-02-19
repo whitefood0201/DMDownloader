@@ -114,4 +114,4 @@ def display_factor(config, danmaku):
         case 0: return FlowDisplay(config, danmaku)
         case 1: return TopDisplay(config, danmaku)
         case 2: return BottomDisplay(config, danmaku)
-        case _: raise NotImplementedError
+        case _: raise NotImplementedError("未知弹幕类型")
