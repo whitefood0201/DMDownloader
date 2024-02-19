@@ -8,7 +8,7 @@
 ### Added
 - 完成了对b站的解析及获取。
 - 完成了对b站弹幕的解析和转换
-- 现在可以直接获取未经转换的下载弹幕源文件。
+- 现在可以选择下载未经转换的下载弹幕源文件。
 - 写了个 cmd 用于将 cookie 写入 config 文件，并添加了配套的`config_template.json`文件
 - 合并了 converter 的与 downloader 的 changelog
 
