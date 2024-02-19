@@ -11,6 +11,6 @@
     "ass_head": "./resource/head.txt", 
     "suffix": ".dm-chs", 
     "download_origin": false,
-    "user_agent": "", 
-    "cookie": "" 
+    "user_agent": "{UA}", 
+    "cookie": "{COOKIE}" 
 }

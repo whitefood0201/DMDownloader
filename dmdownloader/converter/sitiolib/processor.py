@@ -1,11 +1,12 @@
 import json
+import re
 
 class Danmaku:
 
     def __init__(self, data, raw='baha'):
         if(raw == 'baha'):
             self.baha_init(data)
-        elif(raw == 'bilibili'):        
+        elif(raw == 'bili'):        
             self.bili_init(data)
         else:
             raise NotImplementedError
@@ -18,40 +19,36 @@ class Danmaku:
         # 弹幕类型 0: 滚动 1: 上浮 2: 下浮 -1: 不支持
         self.type = int(data['position'])
     
-    def bili_init(self, data):
-        raise NotImplementedError
+    def bili_init(self, data: tuple):
+        ''' 弹幕属性: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/danmaku/danmaku_xml.md '''
+        attr_str, content = data
+        attrs = attr_str.split(",")
+
+        self.text = content
+        self.time = int(float(attrs[0]) * 1000) # b站单位秒，float类型
+        self.color = hex(int(attrs[3])) # b站为十进制RGB888，int类型
+
+        match(int(attrs[1])):
+            case 1|2|3|6: self.type = 0
+            case 5: self.type = 1
+            case 4: self.type = 2
+            case _: self.type = -1
 
 # 预处理
 class Processor:
-    def __init__(self, config: dict, gui_config: dict=None):
+    def __init__(self, config: dict):
         self.config = config
+        self.danmakus = self.load_danmaku(config)
+        
+    def load_danmaku(self, config: dict) -> list:
+        self.text = config["text"]
 
-        if gui_config != None:
-            self.danmakus = self.load_from_gui(gui_config)
-        else:
-            self.danmakus = self.load_from_file()
-
-    def load_from_gui(self, gui_config: dict) -> list:
-        self.text = gui_config["text"]
-
-        if "baha" == gui_config["from"]: # baha 
+        if "baha" == config["from"]: # baha 
             return self.load_baha()
-        elif "bili" == gui_config["from"]: # bilibili
+        elif "bili" == config["from"]: # bilibili
             return self.load_bili()
     
         raise NotImplementedError("未知数据")
-    
-    def load_from_file(self) -> list:
-        with open(self.config["ifile"], 'r', encoding="UTF-8") as file:
-            self.text = file.read()
-            
-        ifile = self.config["ifile"]
-        if ifile.endswith(".json"): # baha 
-            return self.load_baha()
-        elif ifile.endswith(".xml"): # bilibili
-            return self.load_bili()
-        
-        raise NotImplementedError("未知文件")
         
     def load_baha(self) -> list:
         datas = json.loads(self.text)
@@ -62,17 +59,27 @@ class Processor:
                 return data
             datas = map(t2s, datas)
             
-        return list(map(Danmaku, datas))
+        dmks = list(map(Danmaku, datas))
+        dmks.sort(key=lambda dmk: dmk.time)
+        return dmks
 
     def load_bili(self) -> list:
-        # self.danmakus = list(map(lambda x: Danmaku(x, raw="bili"), datas))
-        raise NotImplementedError("b站获取暂未实现，请等待后续更新")
+        text = self.text.replace('<d p="', '\n<d p="')
+        match = re.compile('<d p="(.+)">(\\S+)<\\/d>')
+        datas = match.findall(text)
+
+        dmks = list(map(lambda data: Danmaku(data, raw="bili"), datas))
+        dmks.sort(key=lambda dmk: dmk.time)
+        return dmks
+
     
     def do_filter(self):
         top_filter = lambda dmk: dmk.type == 1
         bottom_filter = lambda dmk: dmk.type == 2
+        none_filter = lambda dmk: dmk.type == -1
         # TODO: more filter
         filter_objs = []
+        filter_objs.append(none_filter)
         if self.config["top_filter"]:
             filter_objs.append(top_filter)
         if self.config["bottom_filter"]:

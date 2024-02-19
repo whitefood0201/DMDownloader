@@ -1,6 +1,10 @@
 /log
 /downloads
+/Releases
 *.pyc
 test.py
 test.json
+test.xml
 test.dm-chs.ass
+b-animeinfo.json
+b-danmaku.xml

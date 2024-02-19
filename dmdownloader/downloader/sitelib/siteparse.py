@@ -3,7 +3,7 @@ import logging
 
 def parse_baha_anime_info(json: dict) -> dict:
     if json.get("error", None) != None:
-        logging.warning("parse: illegal args")
+        logging.warning("baha parse: illegal args")
         raise ValueError("api参数错误")
 
     anime_info = {}
@@ -24,6 +24,21 @@ def parse_baha_anime_info(json: dict) -> dict:
     return anime_info
 
 def parse_bili_anime_info(json: dict) -> dict:
-    """ TODO """
-    logging.ERROR("download: NotImplement bili")
-    raise NotImplementedError("b站获取暂未实现，请等待后续更新")
+    if json["code"] != 0:
+        logging.warning("bili parse: illegal args")
+        raise ValueError("api参数错误")
+    result = json["result"]
+    volumens = result["episodes"]
+
+    anime_info = {}
+    anime_info["title"] = result["title"]
+    anime_info["from"] = "bili"
+
+    eps = {}
+    for vol in volumens:
+        cid = vol["cid"]
+        title = vol["share_copy"]
+        eps[title] = cid
+    anime_info["eps"] = eps
+
+    return anime_info

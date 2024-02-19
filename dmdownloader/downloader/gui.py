@@ -42,10 +42,8 @@ class DownloaderApp(tk.Tk):
         style.configure("ep_title.TLabel", font=(FONT_NAME, 16), foreground="light gray", background="gray")
         style.configure("TButton", font=(FONT_NAME, 14), background="white")
         style.configure("favortes.TButton", font=(FONT_NAME, 12), background="white")
-        style.configure("ep_button.TButton", font=(FONT_NAME, 14), foreground="black", background="white")
-        #style.configure("ep_button_success.TButton", font=(FONT_NAME, 14))
+        style.map("ep_button_downloading.TButton", background=[('!disabled', 'light gray')])
         style.map('ep_button_success.TButton', background=[('!disabled', 'lime')])
-        #style.configure("ep_button_failure.TButton", font=(FONT_NAME, 14))
         style.map('ep_button_failure.TButton', background=[('!disabled', 'red')])
 
         # 界面切换处理
@@ -76,9 +74,9 @@ class DownloaderApp(tk.Tk):
 
     def create_anime_info_frame(self, anime_info):
         """ 
-            创建 AnimeFrame，根据anime_info。\n
+            创建 AnimeFrame，根据anime_info。
             anime_info 格式为：
-                anime_info = {
+                {
                     "title": "title", 
                     "from": "", # baha or bili
                     "eps": {
@@ -139,8 +137,8 @@ class MainFrame(ttk.Frame):
         def on_success(result, app=self.controller):
             app.create_anime_info_frame(result)
 
-        def on_failure(exception, app=self.controller):
-            msg.showerror(title="错误", message="\n".join(exception.args))
+        def on_failure(exception, app=self.controller): 
+            msg.showerror(title="错误", message=repr(exception))
             app.show_frame("main_frame")
 
         self.controller.asyn_event.submit(service.search, url, self.controller.app_config).then(on_success).catch(on_failure)
@@ -195,11 +193,12 @@ class AnimeFrame(ttk.Frame):
             button.config(style="ep_button_success.TButton")
         
         def on_failure(exception: Exception, button=widget):
-            msg.showerror(title="错误", message="\n".join(exception.args))
+            msg.showerror(title="错误", message=repr(exception))
             button.config(style="ep_button_failure.TButton")
 
         self.controller.asyn_event.submit(service.download, epid, site, ofile, self.controller.app_config).then(on_success).catch(on_failure)
 
+        widget.config(style="ep_button_downloading.TButton")
 
 class WaitingFrame(ttk.Frame):
     """ 加载界面 """
@@ -222,9 +221,7 @@ class WaitingFrame(ttk.Frame):
         self.label.after(0, reflash_text())
         self.label.pack()
     
-# 不想写注释，警告后人不要碰gui
-# 这个sb滚动条太恶心了
-# 根本调不好
+# 带滚动条的Frame
 class VetcScrollFrame(ttk.Frame):
     
     ## 通过往canva上加frame(inner_frame)实现，为解决innerframe宽高需要手动传入宽高
