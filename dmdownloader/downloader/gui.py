@@ -85,7 +85,7 @@ class DownloaderApp(tk.Tk):
                     }
                 }
         """
-        height = len(anime_info["eps"]) <= 10 and 490 or 0
+        height = len(anime_info["eps"]) <= 8 and 490 or 0
         self.frames["anime_info"] = VetcScrollFrame(lambda master: AnimeFrame(master=master, anime_info=anime_info, controller=self), 800, height, master=self.container)
         self.frames["anime_info"].grid(row=0,column=0,sticky="nsew")
         self.show_frame("anime_info")
