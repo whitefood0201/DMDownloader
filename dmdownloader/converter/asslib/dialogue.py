@@ -19,7 +19,7 @@ class Dialogue:
         # Color 参数
         color = display.danmaku.color
         if "ffffff" != color.lower(): # 全白(ffffff)不需要添加
-            params.append("\\c&H%s" % color)
+            params.append("\\c&H%s%s%s&" % (color[4:6], color[2:4], color[0:2]))
 
         if self.type == 0: # 滚动弹幕
             # move 参数
