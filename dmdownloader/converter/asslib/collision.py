@@ -12,7 +12,7 @@ class Collision:
 
     def detect(self, display: DisplayBase) -> tuple[int, int]:
         """ 碰撞检测 """
-        track = self.tracks[display.danmaku.type]
+        track = self.tracks[display.danmaku["type"]]
         leave_collision_times = []
 
         for i, leave_collision_time in enumerate(track):

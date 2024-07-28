@@ -1,13 +1,12 @@
-# 描述ass中的dialogue
-
 class Dialogue:
+    '''描述ass中的dialogue'''
 
     TEMPLATE = "Dialogue: {},{},{},Default,,0000,0000,0000,,{}{}"
 
     def __init__(self, display):
         self.display = display
-        self.type = display.danmaku.type
-        self.text = display.danmaku.text
+        self.type = display.danmaku["type"]
+        self.text = display.danmaku["text"]
         self.start_time = to_ass_time(display.start_time)
         self.leave_time = to_ass_time(display.leave_time)
         self.paramenter = self.get_parameter()
@@ -17,7 +16,7 @@ class Dialogue:
         
         params = []
         # Color 参数
-        color = display.danmaku.color
+        color = display.danmaku["color"]
         if "ffffff" != color.lower(): # 全白(ffffff)不需要添加
             params.append("\\c&H%s%s%s&" % (color[4:6], color[2:4], color[0:2]))
 

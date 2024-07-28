@@ -16,6 +16,10 @@
 
 ![anime](./img/anime_frame.png)
 
+设置页面
+
+![setting](./img//setting_frame.png)
+
 
 ## 下载安装
 
@@ -62,20 +66,21 @@ zhconv 繁简转换库。如果不需要可以不安装，但要将`config.json`
 <!--TODO：开个新文件做详细说明-->
 
 默认配置：
-```
+```json
 { 
     "bottom_filter": false, // 是否开启底部弹幕过滤。
     "top_filter": false,  // 顶部弹幕过滤。
     "open_zhconv": true,  // 是否开启繁转简。
     "offset": 1000,  // 偏移上限
     "line_count": 5, // 行数限制
-    "bottom_offset": 0, // 底部偏移，单位为行。
+    "bottom_offset": 2, // 底部偏移，单位为行。
     "font_size": 50, // 字体大小
     "resolution": "1920*1080", // 分辨率，不需要跟视频实际分辨率一致，播放器会执行缩放。
     "font_name": "微软雅黑", // 字体名称
-    "ass_head": "./resource/head.txt", // ass头文件的模板
+    "ass_head": ".\\resource\\head.txt", // ass头文件的模板
     "suffix": ".dm-chs", // 弹幕文件后缀，最终弹幕文件名将为{弹幕名称}{后缀}.ass
     "download_origin": false, // 是否下载未经转换的弹幕源文件
+    "download_path": ".\\downloads\\", // 下载路径
     "cookie": "", // 巴哈姆特所需cookie
     "user_agent": "" // 巴哈姆特所需UA
 }

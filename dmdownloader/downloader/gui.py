@@ -4,33 +4,19 @@ import tkinter as tk
 import dmdownloader.downloader.asyntk as asyntk
 import dmdownloader.downloader.sitelib.service as service
 
-FAVORITES_PATH = "./resource/favorites.json"
-CONFIG_PATH = "./resource/config.json"
 FONT_NAME = "微软雅黑"
 
 class DownloaderApp(tk.Tk):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, cfg, favorites, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-
-        # 载入config
-        try:
-            self.app_config = service.load_json(CONFIG_PATH)
-        except IOError:
-            msg.showerror(title="错误", message="配置文件载入错误")
-            exit(1)
-
-        # 载入favorites
-        favorites = {}
-        try:
-            favorites = service.load_json(FAVORITES_PATH)
-        except IOError:
-            pass
 
         # 自身属性
         self.title("DanmakuDownloader")
         self.geometry("800x490+280+130") 
         self.config(bg="gray")
         self.resizable(False, False)
+        self.app_config = cfg
+        self.favorites = favorites
 
         # 样式管理
         style = ttk.Style()
@@ -56,14 +42,21 @@ class DownloaderApp(tk.Tk):
         # 初始化界面
         self.frames = {}
         height = len(favorites) <= 9 and 490 or 0
+        self.frames["setting_frame"] = InitFrame(master=container, controller=self)
         self.frames["waiting_frame"] = WaitingFrame(master=container, controller=self)
         self.frames["main_frame"] = VetcScrollFrame(lambda master: MainFrame(master=master, favorites=favorites, controller=self), 800, height, master=container)
+        self.frames["setting_frame"].cookie_eny.insert(0, self.app_config["cookie"])
+        self.frames["setting_frame"].ua_eny.insert(0, self.app_config["user_agent"])
 
-        self.frames["waiting_frame"].grid(row=0, column=0, sticky="nsew")        
         self.frames["main_frame"].grid(row=0, column=0, sticky="nsew")
+        self.frames["setting_frame"].grid(row=0, column=0, sticky="nsew")
+        self.frames["waiting_frame"].grid(row=0, column=0, sticky="nsew")
 
         # 初始化 tk 异步任务处理对象
+        
         self.asyn_event = asyntk.AsyncEvent(self)
+
+        self.show_frame("setting_frame")
 
     def show_frame(self, page_name):
         """ 切换页面 """
@@ -90,21 +83,60 @@ class DownloaderApp(tk.Tk):
         self.frames["anime_info"].grid(row=0,column=0,sticky="nsew")
         self.show_frame("anime_info")
 
+class InitFrame(ttk.Frame):
+    """ 初始界面，输入UserAgent和cookie """
+    def __init__(self, master=None, controller=None):
+        super().__init__(master, relief="sunken")
+        self.master = master
+        self.controller = controller
+
+        self.get_input_frame().pack(ipady=20)
+        self.get_btn_frame().pack(ipady=20)
+    
+    def get_input_frame(self):
+        fra = ttk.Frame(self)
+        
+        ua = tk.StringVar()
+        cookie = tk.StringVar()
+        self.ua_eny = ttk.Entry(fra, width=75, font=(FONT_NAME, 10), textvariable=ua)
+        self.cookie_eny = ttk.Entry(fra, width=75, font=(FONT_NAME, 10), textvariable=cookie)
+
+        ttk.Label(master=fra, text="\n\n\nUserAgent:", width=50, style="ep_title.TLabel").pack()
+        self.ua_eny.pack()
+        ttk.Label(master=fra, text="Cookie:", width=50, style="ep_title.TLabel").pack()
+        self.cookie_eny.pack()
+        
+        return fra
+    
+    def get_btn_frame(self):
+        fra = ttk.Frame(self)
+
+        def handler():
+            self.controller.app_config["user_agent"] = self.ua_eny.get()
+            self.controller.app_config["cookie"] = self.cookie_eny.get()
+            self.controller.show_frame("main_frame")
+        ttk.Button(fra, text="确认", style="favortes.TButton", command=handler).pack()
+
+        return fra
 
 class MainFrame(ttk.Frame):
+
     """ 主界面，提供搜索栏和收藏栏 """
     def __init__(self, master=None, controller=None, favorites=None):
         super().__init__(master, relief="sunken")
         self.master = master
         self.controller = controller
 
+        def handler(self=self):
+            self.controller.show_frame("setting_frame")
+        ttk.Button(master=self, text="设置", command=handler, width=5).pack(anchor="nw", side="top", padx=20, pady=5)
         self.get_blank_frame().pack(side="top")
         self.get_search_frame().pack(side="top", pady=10)
         self.get_favorite_frame(favorites).pack(side="top")
 
     def get_blank_frame(self):
         fra = ttk.Frame(self)
-        ttk.Label(fra, text="\nDMDownloader", style="title.TLabel").pack()
+        ttk.Label(fra, text="DMDownloader", style="title.TLabel").pack()
         return fra
 
     def get_search_frame(self):
@@ -112,10 +144,7 @@ class MainFrame(ttk.Frame):
 
         text = tk.StringVar()
         self.eny = ttk.Entry(fra01, width=75, font=(FONT_NAME, 10), textvariable=text)
-
-        def handler(self=self, url=text):
-            self.search(text.get())
-        self.btn = ttk.Button(fra01, text="搜索", width=5, command=handler)
+        self.btn = ttk.Button(fra01, text="搜索", width=5, command=lambda:self.search(text.get()))
 
         self.eny.pack(side="left", padx=2, ipady=1) 
         self.btn.pack(side="left")

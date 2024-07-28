@@ -1,9 +1,10 @@
 from unicodedata import east_asian_width
 
+# 描述一个屏幕中的弹幕
 class DisplayBase:
-    def __init__(self, config, danmaku):
-        self.danmaku = danmaku
-        self.config = config
+    def __init__(self, config, danmaku: dict):
+        self.danmaku: dict = danmaku
+        self.config: dict = config
         self.screen_x, self.screen_y = map(int, config["resolution"].split("*"))
         self.line = 1
 
@@ -14,13 +15,13 @@ class DisplayBase:
         self.vertical = self._vertical()
         self.horizontal = self._horizontal()
 
-        self.start_time = self.danmaku.time
+        self.start_time = self.danmaku["time"]
         self.leave_time = self._leave_time()
 
     def _text_length(self):
         """ 文本字符总数，ascill 字符为1，否则为2 """
         width = 0
-        for char in self.danmaku.text:
+        for char in self.danmaku["text"]:
             width += east_asian_width(char) == "Na" and 1 or 2
         return width + 1 # +1 当作左右边框
     
@@ -108,9 +109,8 @@ class FlowDisplay(DisplayBase):
         # 滚动弹幕离开碰撞时间就是完全进入屏幕时，即走过自身长度所需的时间
         return self.start_time + (self.width / self.speed() * 1000)
     
-def display_factor(config, danmaku):
-    type = danmaku.type
-    match(type):
+def display_factory(config, danmaku: dict):
+    match(danmaku["type"]):
         case 0: return FlowDisplay(config, danmaku)
         case 1: return TopDisplay(config, danmaku)
         case 2: return BottomDisplay(config, danmaku)

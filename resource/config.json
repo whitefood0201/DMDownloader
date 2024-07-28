@@ -1,16 +1,17 @@
-{ 
-    "bottom_filter": false, 
-    "top_filter": false, 
-    "open_zhconv": true, 
-    "offset": 1000, 
-    "line_count": 5, 
-    "bottom_offset": 0, 
-    "font_size": 50, 
-    "resolution": "1920*1080", 
-    "font_name": "微软雅黑", 
-    "ass_head": "./resource/head.txt", 
-    "suffix": ".dm-chs", 
+{
+    "bottom_filter": false,
+    "top_filter": false,
+    "open_zhconv": true,
+    "offset": 1000,
+    "line_count": 5,
+    "bottom_offset": 2,
+    "font_size": 50,
+    "resolution": "1920*1080",
+    "font_name": "\u5fae\u8f6f\u96c5\u9ed1",
+    "ass_head": ".\\resource\\head.txt",
+    "suffix": ".dm-chs",
     "download_origin": false,
-    "user_agent": "", 
-    "cookie": "" 
+    "download_path": ".\\downloads\\",
+    "user_agent": "",
+    "cookie": ""
 }
