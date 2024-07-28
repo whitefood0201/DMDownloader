@@ -66,7 +66,7 @@ zhconv 繁简转换库。如果不需要可以不安装，但要将`config.json`
 <!--TODO：开个新文件做详细说明-->
 
 默认配置：
-```json
+```
 { 
     "bottom_filter": false, // 是否开启底部弹幕过滤。
     "top_filter": false,  // 顶部弹幕过滤。
