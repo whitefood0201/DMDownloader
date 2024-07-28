@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [2.1.0]
+- 将其他配置添加到设置页面中
+
+## [2.0.0] - 2024/07/28
+
+### Changed
+- 使用函数式/声明式更改`converter`模块内部逻辑。
+- 移除`logging`，使用重定向`print()`输出 log 。默认关闭，由`dmdownloader.downloader.downl.py`中的`log`变量控制
+
+### Added
+- 添加了设置页面，目前能对`ua`和`cookie`进行设置。
+- 完善了`converter 的`-h`命令
+- 现在可以对下载路径进行设置了
+
 
 ## [1.0.2] - 2024/04/06
 

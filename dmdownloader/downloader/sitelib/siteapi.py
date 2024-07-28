@@ -1,7 +1,6 @@
 # 封装网站api
 import urllib.request, urllib.parse, urllib.error
 import zlib
-import logging
 
 BAHA_ANIMEINFO = "https://api.gamer.com.tw/mobile_app/anime/v2/video.php"
 BAHA_DANMAKU = "https://ani.gamer.com.tw/ajax/danmuGet.php"
@@ -17,10 +16,8 @@ def get_baha_animeinfo(sn, headers) -> str:
         response = urllib.request.urlopen(url=url, timeout=10)
         ret = response.read().decode("UTF-8")
     except urllib.error.HTTPError as e:
-        logging.warning("api: {}: response code {}, check baha cookie".format(BAHA_ANIMEINFO, e.code))
         raise ValueError("Baha api 请求失败，请检查cookie")
     except urllib.error.URLError as e:
-        logging.warning("api: {}: {}".format(BAHA_DANMAKU, e.reason))
         raise ConnectionError("网址错误或网络异常")
 
     return ret
@@ -35,10 +32,8 @@ def get_baha_danmaku(sn, headers) -> str:
         response = urllib.request.urlopen(req, timeout=10)
         ret = response.read().decode("UTF-8")
     except urllib.error.HTTPError as e:
-        logging.warning("api: {}: response code {}, check baha cookie".format(BAHA_DANMAKU, e.code))
-        raise ValueError("Baha api 请求失败，请检查cookie")    
+        raise ValueError("Baha api 请求失败，请检查cookie")
     except urllib.error.URLError as e:
-        logging.warning("api: {}: {}".format(BAHA_DANMAKU, e.reason))
         raise ConnectionError("网址错误或网络异常")
     
     return ret
@@ -55,10 +50,8 @@ def get_bili_animeinfo(prefix, id):
         response = urllib.request.urlopen(req, timeout=10)
         ret = response.read().decode("UTF-8")
     except urllib.error.HTTPError as e:
-        logging.warning("api: {}: response code {}".format(url, e.code))
         raise ValueError("Bili api 请求失败")
     except urllib.error.URLError as e:
-        logging.warning("api: {}: {}".format(url, e.reason))
         raise ConnectionError("网址错误或网络异常")
     
     return ret
@@ -73,10 +66,8 @@ def get_bili_danmaku(cid):
         # b站弹幕xml文件使用deflate编码
         ret = zlib.decompress(response.read(), -zlib.MAX_WBITS).decode("UTF-8")
     except urllib.error.HTTPError as e:
-        logging.warning("api: {}: response code {}".format(url, e.code))
         raise ValueError("Bili api 请求失败")
     except urllib.error.URLError as e:
-        logging.warning("api: {}: {}".format(url, e.reason))
         raise ConnectionError("网址错误或网络异常")
 
     return ret

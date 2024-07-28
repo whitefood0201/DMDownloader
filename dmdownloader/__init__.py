@@ -1,6 +1,5 @@
-
 def start_conv():
-    from dmdownloader.converter.conv import main
+    from dmdownloader.converter.start import main
     main()
 
 def start_downl():

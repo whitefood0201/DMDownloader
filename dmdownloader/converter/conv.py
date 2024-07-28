@@ -1,53 +1,25 @@
-import sys
-import logging
-import dmdownloader.converter.argparser as argparser
-from dmdownloader.converter.sitiolib.processor import Processor
-from dmdownloader.converter.asslib.converter import Converter
-from dmdownloader.converter.asslib.asscreater import AssCreater
+import dmdownloader.converter.sitiolib.danmaku as danmaku
+import dmdownloader.converter.sitiolib.filter as filter
+import dmdownloader.converter.asslib.converter as converter
+from dmdownloader.converter.asslib.dialogue import Dialogue
+import dmdownloader.functional.FLfunctions as fl
+import dmdownloader.functional.decorators as dc
 
-def convert(config: dict) -> None:
-    logging.info("convert: {}".format(config["ifile"]))
-    
-    # 预处理
-    pro = Processor(config)
-    pro.do_filter()
-    print("过滤 %(filted)d 条弹幕\n共 %(total)d 条，剩余 %(left)d 条" % pro.report())
-    logging.info("过滤 %(filted)d 条弹幕\n共 %(total)d 条，剩余 %(left)d 条" % pro.report())
+def do(global_config: dict, str_danmakus: str) -> list[Dialogue]:
+    '''
+        The enter of the converter    
+        will print the report using `print()`
 
-    # 将 danmaku 转换为 ass 语句
-    dmks = pro.get_left()
-    converter = Converter(config, dmks)
-    converter.convert()
-    print("丢弃 %(filted)d 条弹幕 - 共 %(total)d 条，剩余 %(left)d 条" % converter.get_report())
-    logging.info("丢弃 %(filted)d 条弹幕 - 共 %(total)d 条，剩余 %(left)d 条" % converter.get_report())
+        args:
+            global_config,
+            raw danmakus data: xml for bilibili, json for bahamut
 
-    # 生成 ass 文件
-    dialogues = converter.get_dialogues()
-    creater = AssCreater(config, dialogues)
-    
-    config["ofile"] = creater.create_file()
-    print('转换完毕: "%(ifile)s" -----> "%(ofile)s"' % config)
-    logging.info('转换完毕: "%(ifile)s" -----> "%(ofile)s"' % config)
-
-def main():
-    cfg = argparser.get_args(sys.argv)
-    if(cfg == -1):
-        sys.exit(0)
-    
-    text, site = load_danmaku_file(cfg["ifile"])
-    cfg["text"] = text
-    cfg["from"] = site
-    convert(config=cfg)
-
-def load_danmaku_file(ifile) -> tuple:
-    """ Load a danmaku file, return the content and the site of it"""
-    with open(ifile, 'r', encoding="UTF-8") as file:
-        text = file.read()
-    
-    if ifile.endswith(".json"): # baha 
-        return text, "baha"
-    elif ifile.endswith(".xml"): # bilibili
-        return text, "bili"
-
-    raise NotImplementedError("未知文件")
-    
+        return:
+          the dialogue data    
+    '''
+    funcs = [
+        dc.globalConfigDecorater(danmaku.generate, global_config),
+        dc.globalConfigDecorater(dc.printReportPrinterDecorater(filter.do, filter.filter_report_template), global_config),
+        dc.globalConfigDecorater(dc.printReportPrinterDecorater(converter.do, converter.converter_report_template), global_config),
+    ]
+    return fl.pipe(funcs)(str_danmakus)

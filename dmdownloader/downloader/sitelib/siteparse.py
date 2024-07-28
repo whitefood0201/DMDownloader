@@ -1,9 +1,7 @@
 # 解析网站 api 发过来的数据
-import logging
 
 def parse_baha_anime_info(json: dict) -> dict:
     if json.get("error", None) != None:
-        logging.warning("baha parse: illegal args")
         raise ValueError("api参数错误")
 
     anime_info = {}
@@ -25,7 +23,6 @@ def parse_baha_anime_info(json: dict) -> dict:
 
 def parse_bili_anime_info(json: dict) -> dict:
     if json["code"] != 0:
-        logging.warning("bili parse: illegal args")
         raise ValueError("api参数错误")
     result = json["result"]
     volumens = result["episodes"]
