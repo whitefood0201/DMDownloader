@@ -5,7 +5,8 @@
 ## [2.1.0]
 
 ### Added
-- 将`bottom_filter`、`top_filter`、`open_zhconv`、`download_raw`添加入配置文件
+- 添加开关类设置
+- 修改设置页面逻辑
 
 ### Changed
 - 将`download_origin`设置更名为`download_raw`
