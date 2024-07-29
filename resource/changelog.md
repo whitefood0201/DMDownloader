@@ -3,7 +3,13 @@
 ## [Unreleased]
 
 ## [2.1.0]
-- 将其他配置添加到设置页面中
+
+### Added
+- 将`bottom_filter`、`top_filter`、`open_zhconv`、`download_raw`添加入配置文件
+
+### Changed
+- 将`download_origin`设置更名为`download_raw`
+  
 
 ## [2.0.0] - 2024/07/28
 

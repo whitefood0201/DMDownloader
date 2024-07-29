@@ -10,7 +10,7 @@
     "font_name": "\u5fae\u8f6f\u96c5\u9ed1",
     "ass_head": ".\\resource\\head.txt",
     "suffix": ".dm-chs",
-    "download_origin": false,
+    "download_raw": false,
     "download_path": ".\\downloads\\",
     "user_agent": "",
     "cookie": ""
