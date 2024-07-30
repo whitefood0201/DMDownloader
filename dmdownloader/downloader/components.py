@@ -27,9 +27,10 @@ def inputBox(master: tk.Misc, labelText: str, bindVar: tk.Variable, font, style:
     ttk.Entry(master=fra, width=75, font=font, textvariable=bindVar).pack()
     return fra
 
-def optBox(master: tk.Misc, labelText , bindVar: tk.BooleanVar, style) -> tuple[ttk.Frame, tk.Scale]:
+def optBox(master: tk.Misc, labelText: str, bindVar: tk.BooleanVar, initValue: int, style: str) -> tuple[ttk.Frame, tk.Scale]:
     fra = ttk.Frame(master=master)
     ttk.Label(master=fra, text=labelText, style=style).pack()
     opt = optButton(fra, *bindBoolVar(bindVar))
+    opt.set(initValue)
     opt.pack(pady=10)
     return fra, opt

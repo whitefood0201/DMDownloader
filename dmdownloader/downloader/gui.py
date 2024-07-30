@@ -4,6 +4,8 @@ import tkinter as tk
 import dmdownloader.downloader.asyntk as asyntk
 import dmdownloader.downloader.sitelib.service as service
 import dmdownloader.downloader.components as cmp
+import dmdownloader.functional.FLfunctions as fl
+import dmdownloader.functional.lambdas as lm
 
 FONT_NAME = "微软雅黑"
 
@@ -89,7 +91,14 @@ class InitFrame(ttk.Frame):
         super().__init__(master, relief="sunken")
         self.master = master
         self.controller = controller
-        self.global_config = controller.app_config
+        self.global_config: dict = controller.app_config
+
+        var_loaders = []
+        var_savers = []
+        self.savers_append = lambda saver: var_savers.append(saver)
+        self.loader_append = lambda loader: var_loaders.append(loader)
+        self.load_config = lambda: fl.map(lm.run_function(self.global_config), var_loaders)
+        self.save_config = lambda: fl.map(lm.run_function(self.global_config), var_savers)
 
         ttk.Label(self, text="设置", style="title.TLabel").pack(ipady=20)
         self.get_input_frame().pack()
@@ -97,51 +106,38 @@ class InitFrame(ttk.Frame):
     
     def get_input_frame(self):
         fra = ttk.Frame(self)
+
+        def fast_append(var: tk.Variable, key: str) -> tk.Variable:
+            def load(config: dict):
+                var.set(config[key])
+            def save(config: dict):
+                config[key] = var.get()
+            self.loader_append(load)
+            self.savers_append(save)
+            return var
         
-        self.ua_var = tk.StringVar()
-        self.cookie_var = tk.StringVar()
-        self.top_filter_var = tk.BooleanVar()
-        self.bottom_filter_var = tk.BooleanVar()
-        self.zhconv_var = tk.BooleanVar()
-        self.raw_var = tk.BooleanVar()
+        self.ua_var = fast_append(tk.StringVar(), "user_agent")
+        self.cookie_var = fast_append(tk.StringVar(), "cookie")
+        self.top_filter_var = fast_append(tk.BooleanVar(), "top_filter")
+        self.bottom_filter_var = fast_append(tk.BooleanVar(), "bottom_filter")
+        self.zhconv_var = fast_append(tk.BooleanVar(), "open_zhconv")
+        self.raw_var = fast_append(tk.BooleanVar(), "download_raw")
 
         cmp.inputBox(fra, "UserAgent:", self.ua_var, (FONT_NAME, 10), "ep_title.TLabel").pack()
         cmp.inputBox(fra, "Cookie:", self.cookie_var, (FONT_NAME, 10), "ep_title.TLabel").pack()
 
         opt_fra = ttk.Frame(fra)
-        fra_top, self.opt_top = cmp.optBox(opt_fra, "顶部弹幕过滤", self.top_filter_var, "ep_title.TLabel")
+        fra_top, self.opt_top = cmp.optBox(opt_fra, "顶部弹幕过滤", self.top_filter_var, int(self.global_config["top_filter"]), "ep_title.TLabel")
         fra_top.pack(side="left", padx=30)
-        fra_bot, self.opt_bot = cmp.optBox(opt_fra, "底部弹幕过滤", self.bottom_filter_var, "ep_title.TLabel")
+        fra_bot, self.opt_bot = cmp.optBox(opt_fra, "底部弹幕过滤", self.bottom_filter_var, int(self.global_config["bottom_filter"]), "ep_title.TLabel")
         fra_bot.pack(side="left", padx=30)
-        fra_zh, self.opt_zh = cmp.optBox(opt_fra, "繁转换", self.zhconv_var, "ep_title.TLabel")
+        fra_zh, self.opt_zh = cmp.optBox(opt_fra, "繁转换", self.zhconv_var, int(self.global_config["open_zhconv"]), "ep_title.TLabel")
         fra_zh.pack(side="left", padx=30)
-        fra_raw, self.opt_raw = cmp.optBox(opt_fra, "下载源文件", self.raw_var, "ep_title.TLabel")
+        fra_raw, self.opt_raw = cmp.optBox(opt_fra, "下载源文件", self.raw_var, int(self.global_config["download_raw"]), "ep_title.TLabel")
         fra_raw.pack(side="left", padx=30)
         opt_fra.pack()
 
         return fra
-    
-    def load_config(self):
-        config = self.global_config
-        self.ua_var.set(config["user_agent"])
-        self.cookie_var.set(config["cookie"])
-
-        self.opt_top.set(int(config["top_filter"]))
-        self.opt_bot.set(int(config["bottom_filter"]))
-        self.opt_zh.set(int(config["open_zhconv"]))
-        self.opt_raw.set(int(config["download_raw"]))
-        self.top_filter_var.set(config["top_filter"])
-        self.bottom_filter_var.set(config["bottom_filter"])
-        self.zhconv_var.set(config["open_zhconv"])
-        self.raw_var.set(config["download_raw"])
-    
-    def save_config(self):
-            config = self.global_config
-            self.global_config["user_agent"] = self.ua_var.get()
-            self.global_config["cookie"] = self.cookie_var.get()
-            config["top_filter"] = self.top_filter_var.get()
-            config["bottom_filter"] = self.bottom_filter_var.get()
-            config["open_zhconv"] = self.zhconv_var.get()
     
     def get_btn_frame(self):
         fra = ttk.Frame(self)
