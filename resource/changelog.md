@@ -10,7 +10,7 @@
 
 ### Changed
 - 将`download_origin`设置更名为`download_raw`
-  
+- 统一程序 IO 出入口
 
 ## [2.0.0] - 2024/07/28
 
