@@ -48,7 +48,6 @@ class DownloaderApp(tk.Tk):
         self.frames["setting_frame"] = InitFrame(master=container, controller=self)
         self.frames["waiting_frame"] = WaitingFrame(master=container, controller=self)
         self.frames["main_frame"] = VetcScrollFrame(lambda master: MainFrame(master=master, favorites=favorites, controller=self), 800, height, master=container)
-        self.frames["setting_frame"].load_config()
 
         self.frames["main_frame"].grid(row=0, column=0, sticky="nsew")
         self.frames["setting_frame"].grid(row=0, column=0, sticky="nsew")
@@ -92,48 +91,43 @@ class InitFrame(ttk.Frame):
         self.master = master
         self.controller = controller
         self.global_config: dict = controller.app_config
-
-        var_loaders = []
-        var_savers = []
-        self.savers_append = lambda saver: var_savers.append(saver)
-        self.loader_append = lambda loader: var_loaders.append(loader)
-        self.load_config = lambda: fl.map(lm.run_function(self.global_config), var_loaders)
-        self.save_config = lambda: fl.map(lm.run_function(self.global_config), var_savers)
+        self.initBindVariables()
 
         ttk.Label(self, text="设置", style="title.TLabel").pack(ipady=20)
         self.get_input_frame().pack()
         self.get_btn_frame().pack()
+
+    def initBindVariables(self):
+        def defineVar(key: str, value) -> tk.Variable:
+            var = None
+            if isinstance(value, int): var = tk.IntVar(value=value)
+            elif isinstance(value, str): var = tk.StringVar(value=value)
+            elif isinstance(value, bool): var = tk.BooleanVar(value=value)
+            elif isinstance(value, float): var = tk.DoubleVar(value=value)
+            else: raise NotImplementedError("only support int, str, bool and float")
+            return var
+        self.vars = fl.dict_map(defineVar, self.global_config)
+
+        def save(config: dict):
+            def do(key: str, var: tk.Variable) -> None:
+                config[key] = var.get()
+            return do
+        self.save_config = lambda: fl.dict_map(save(self.global_config), self.vars)
     
     def get_input_frame(self):
         fra = ttk.Frame(self)
 
-        def fast_append(var: tk.Variable, key: str) -> tk.Variable:
-            def load(config: dict):
-                var.set(config[key])
-            def save(config: dict):
-                config[key] = var.get()
-            self.loader_append(load)
-            self.savers_append(save)
-            return var
-        
-        self.ua_var = fast_append(tk.StringVar(), "user_agent")
-        self.cookie_var = fast_append(tk.StringVar(), "cookie")
-        self.top_filter_var = fast_append(tk.BooleanVar(), "top_filter")
-        self.bottom_filter_var = fast_append(tk.BooleanVar(), "bottom_filter")
-        self.zhconv_var = fast_append(tk.BooleanVar(), "open_zhconv")
-        self.raw_var = fast_append(tk.BooleanVar(), "download_raw")
-
-        cmp.inputBox(fra, "UserAgent:", self.ua_var, (FONT_NAME, 10), "ep_title.TLabel").pack()
-        cmp.inputBox(fra, "Cookie:", self.cookie_var, (FONT_NAME, 10), "ep_title.TLabel").pack()
+        cmp.inputBox(fra, "UserAgent:", self.vars["user_agent"], (FONT_NAME, 10), "ep_title.TLabel").pack()
+        cmp.inputBox(fra, "Cookie:", self.vars["cookie"], (FONT_NAME, 10), "ep_title.TLabel").pack()
 
         opt_fra = ttk.Frame(fra)
-        fra_top, self.opt_top = cmp.optBox(opt_fra, "顶部弹幕过滤", self.top_filter_var, int(self.global_config["top_filter"]), "ep_title.TLabel")
+        fra_top, self.opt_top = cmp.optBox(opt_fra, "顶部弹幕过滤", self.vars["top_filter"],"ep_title.TLabel")
         fra_top.pack(side="left", padx=30)
-        fra_bot, self.opt_bot = cmp.optBox(opt_fra, "底部弹幕过滤", self.bottom_filter_var, int(self.global_config["bottom_filter"]), "ep_title.TLabel")
+        fra_bot, self.opt_bot = cmp.optBox(opt_fra, "底部弹幕过滤", self.vars["bottom_filter"], "ep_title.TLabel")
         fra_bot.pack(side="left", padx=30)
-        fra_zh, self.opt_zh = cmp.optBox(opt_fra, "繁转换", self.zhconv_var, int(self.global_config["open_zhconv"]), "ep_title.TLabel")
+        fra_zh, self.opt_zh = cmp.optBox(opt_fra, "繁转换", self.vars["open_zhconv"], "ep_title.TLabel")
         fra_zh.pack(side="left", padx=30)
-        fra_raw, self.opt_raw = cmp.optBox(opt_fra, "下载源文件", self.raw_var, int(self.global_config["download_raw"]), "ep_title.TLabel")
+        fra_raw, self.opt_raw = cmp.optBox(opt_fra, "下载源文件", self.vars["download_raw"], "ep_title.TLabel")
         fra_raw.pack(side="left", padx=30)
         opt_fra.pack()
 

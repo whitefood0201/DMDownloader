@@ -1,3 +1,8 @@
+"""
+Funcional Programing module     
+Content some basic function.
+"""
+
 '''
 # 为什么python不支持尾递归优化
 import sys
@@ -62,6 +67,12 @@ def map(callback, arr):
         pre.append(callback(curr))
         return pre
     return reduce(do, arr, [])
+
+def dict_map(callback, dict):
+    def do(pre, key):
+        pre[key] = callback(key, dict[key])
+        return pre
+    return reduce(reduceAdaptor(do), list(dict.keys()), {})
 
 def filter(callback, arr):
     def do(pre, curr, index):
