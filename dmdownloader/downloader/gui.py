@@ -100,9 +100,9 @@ class InitFrame(ttk.Frame):
     def initBindVariables(self):
         def defineVar(key: str, value) -> tk.Variable:
             var = None
-            if isinstance(value, int): var = tk.IntVar(value=value)
+            if isinstance(value, bool): var = tk.BooleanVar(value=value)
+            elif isinstance(value, int): var = tk.IntVar(value=value)
             elif isinstance(value, str): var = tk.StringVar(value=value)
-            elif isinstance(value, bool): var = tk.BooleanVar(value=value)
             elif isinstance(value, float): var = tk.DoubleVar(value=value)
             else: raise NotImplementedError("only support int, str, bool and float")
             return var
