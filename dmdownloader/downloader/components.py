@@ -21,16 +21,25 @@ def bindBoolVar(boolVar: tk.Variable):
         boolVar.set(False)
     return onOn, onOff
 
-def inputBox(master: tk.Misc, labelText: str, bindVar: tk.Variable, font, style: str) -> ttk.Frame:
+def strInputBox(master: tk.Misc, labelText: str, width: int, bindVar: tk.Variable, font, style: str) -> ttk.Frame:
     fra = ttk.Frame(master=master)
-    ttk.Label(master=fra, text=labelText, width=50, style=style).pack()
-    ttk.Entry(master=fra, width=75, font=font, textvariable=bindVar).pack()
+    ttk.Label(master=fra, text=labelText, style=style).pack(anchor="w")
+    ttk.Entry(master=fra, width=width, font=font, textvariable=bindVar).pack()
+
     return fra
 
-def optBox(master: tk.Misc, labelText: str, bindVar: tk.BooleanVar, style: str) -> tuple[ttk.Frame, tk.Scale]:
+def intInputBox(master: tk.Misc, labelText: str, width: int, bindVar: tk.Variable, font, style: str) -> ttk.Frame:
     fra = ttk.Frame(master=master)
-    ttk.Label(master=fra, text=labelText, style=style).pack()
+    ttk.Label(master=fra, text=labelText, font=font, style=style).pack(anchor="w", side="left")
+    ttk.Entry(master=fra, width=width, font=font, textvariable=bindVar,
+              validate='all', validatecommand=(master.register(lambda P: str.isdigit(P) or str(P) == ""), '%P')).pack(side="left")
+    return fra
+
+
+def optBox(master: tk.Misc, labelText: str, bindVar: tk.BooleanVar, font, style: str) -> ttk.Frame:
+    fra = ttk.Frame(master=master)
+    ttk.Label(master=fra, text=labelText, font=font, style=style).pack()
     opt = optButton(fra, *bindBoolVar(bindVar))
     opt.set(bindVar.get())
     opt.pack(pady=10)
-    return fra, opt
+    return fra

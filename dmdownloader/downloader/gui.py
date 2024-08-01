@@ -5,7 +5,6 @@ import dmdownloader.downloader.asyntk as asyntk
 import dmdownloader.downloader.sitelib.service as service
 import dmdownloader.downloader.components as cmp
 import dmdownloader.functional.FLfunctions as fl
-import dmdownloader.functional.lambdas as lm
 
 FONT_NAME = "微软雅黑"
 
@@ -45,7 +44,8 @@ class DownloaderApp(tk.Tk):
         # 初始化界面
         self.frames = {}
         height = len(favorites) <= 9 and 490 or 0
-        self.frames["setting_frame"] = InitFrame(master=container, controller=self)
+        self.frames["setting_frame"] = VetcScrollFrame(lambda master: SettingFrame(master=master, controller=self), 800, 0, master=container)
+        #self.frames["setting_frame"] = SettingFrame(master=container, controller=self)
         self.frames["waiting_frame"] = WaitingFrame(master=container, controller=self)
         self.frames["main_frame"] = VetcScrollFrame(lambda master: MainFrame(master=master, favorites=favorites, controller=self), 800, height, master=container)
 
@@ -84,18 +84,18 @@ class DownloaderApp(tk.Tk):
         self.frames["anime_info"].grid(row=0,column=0,sticky="nsew")
         self.show_frame("anime_info")
 
-class InitFrame(ttk.Frame):
+class SettingFrame(ttk.Frame):
     """ 初始界面，输入UserAgent和cookie """
     def __init__(self, master=None, controller=None):
         super().__init__(master, relief="sunken")
         self.master = master
         self.controller = controller
         self.global_config: dict = controller.app_config
-        self.initBindVariables()
+        self.vars, self.save_config = self.initBindVariables()
 
-        ttk.Label(self, text="设置", style="title.TLabel").pack(ipady=20)
+        ttk.Label(self, text="设置", style="title.TLabel").pack(pady=5)
         self.get_input_frame().pack()
-        self.get_btn_frame().pack()
+        self.get_btn(self).pack(pady=20)
 
     def initBindVariables(self):
         def defineVar(key: str, value) -> tk.Variable:
@@ -106,40 +106,57 @@ class InitFrame(ttk.Frame):
             elif isinstance(value, float): var = tk.DoubleVar(value=value)
             else: raise NotImplementedError("only support int, str, bool and float")
             return var
-        self.vars = fl.dict_map(defineVar, self.global_config)
+        vars = fl.dict_map(defineVar, self.global_config)
 
         def save(config: dict):
             def do(key: str, var: tk.Variable) -> None:
                 config[key] = var.get()
             return do
-        self.save_config = lambda: fl.dict_map(save(self.global_config), self.vars)
+        save_config = lambda: fl.dict_map(save(self.global_config), vars)
+
+        return vars, save_config
     
     def get_input_frame(self):
+        FONT = (FONT_NAME, 12)
+        STYLE = "ep_title.TLabel"
         fra = ttk.Frame(self)
-
-        cmp.inputBox(fra, "UserAgent:", self.vars["user_agent"], (FONT_NAME, 10), "ep_title.TLabel").pack()
-        cmp.inputBox(fra, "Cookie:", self.vars["cookie"], (FONT_NAME, 10), "ep_title.TLabel").pack()
-
+        
+        web_fra = ttk.Frame(fra)
+        cmp.strInputBox(web_fra, "UserAgent:", 75, self.vars["user_agent"], FONT, STYLE).pack()
+        cmp.strInputBox(web_fra, "Cookie:", 75, self.vars["cookie"], FONT, STYLE).pack()
+        
         opt_fra = ttk.Frame(fra)
-        fra_top, self.opt_top = cmp.optBox(opt_fra, "顶部弹幕过滤", self.vars["top_filter"],"ep_title.TLabel")
-        fra_top.pack(side="left", padx=30)
-        fra_bot, self.opt_bot = cmp.optBox(opt_fra, "底部弹幕过滤", self.vars["bottom_filter"], "ep_title.TLabel")
-        fra_bot.pack(side="left", padx=30)
-        fra_zh, self.opt_zh = cmp.optBox(opt_fra, "繁转换", self.vars["open_zhconv"], "ep_title.TLabel")
-        fra_zh.pack(side="left", padx=30)
-        fra_raw, self.opt_raw = cmp.optBox(opt_fra, "下载源文件", self.vars["download_raw"], "ep_title.TLabel")
-        fra_raw.pack(side="left", padx=30)
-        opt_fra.pack()
+        cmp.optBox(opt_fra, "顶部弹幕过滤", self.vars["top_filter"], FONT, STYLE).pack(side="left", padx=30)
+        cmp.optBox(opt_fra, "底部弹幕过滤", self.vars["bottom_filter"], FONT, STYLE).pack(side="left", padx=30)
+        cmp.optBox(opt_fra, "繁转换", self.vars["open_zhconv"], FONT, STYLE).pack(side="left", padx=30)
+        cmp.optBox(opt_fra, "下载源文件", self.vars["download_raw"], FONT, STYLE).pack(side="left", padx=30)
 
+        int_fra = ttk.Frame(fra)
+        cmp.intInputBox(int_fra, "偏移上限：", 6, self.vars["offset"], FONT, STYLE).pack(side="left", padx=20)
+        cmp.intInputBox(int_fra, "最大行数：", 6, self.vars["line_count"], FONT, STYLE).pack(side="left", padx=20)
+        cmp.intInputBox(int_fra, "底部偏移：", 6, self.vars["bottom_offset"], FONT, STYLE).pack(side="left", padx=20)
+        cmp.intInputBox(int_fra, "字体大小：", 6, self.vars["font_size"], FONT, STYLE).pack(side="left", padx=20)
+
+        str_fra = ttk.Frame(fra)
+        cmp.strInputBox(str_fra, "文件后缀：", 20, self.vars["suffix"], FONT, STYLE).pack(side="left", padx=20)
+        cmp.strInputBox(str_fra, "分辨率：", 20, self.vars["resolution"], FONT, STYLE).pack(side="left", padx=20)
+        cmp.strInputBox(str_fra, "字体名称：", 20, self.vars["font_name"], FONT, STYLE).pack(side="left", padx=20)
+        str_fra_2 = ttk.Frame(fra)
+        cmp.strInputBox(str_fra_2, "下载路径：", 25, self.vars["download_path"], FONT, STYLE).pack(side="left", padx=20)
+        cmp.strInputBox(str_fra_2, "ass头文件路径：", 25, self.vars["ass_head"], FONT, STYLE).pack(side="left", padx=20)
+        
+        web_fra.pack(pady=10)
+        opt_fra.pack(pady=10)
+        int_fra.pack(pady=10)
+        str_fra.pack(pady=10)
+        str_fra_2.pack(pady=10)
         return fra
     
-    def get_btn_frame(self):
-        fra = ttk.Frame(self)
+    def get_btn(self, master):
         def handler():
             self.save_config()
             self.controller.show_frame("main_frame")
-        ttk.Button(fra, text="确认", style="favortes.TButton", command=handler).pack()
-        return fra
+        return ttk.Button(master, text="确认", style="favortes.TButton", command=handler)
 
 class MainFrame(ttk.Frame):
 
@@ -295,7 +312,7 @@ class VetcScrollFrame(ttk.Frame):
 
         # 通过以下方式调整canvas的scrollable区域
         def on_mousewheel(event):
-            canva.yview_scroll(-1 * int(event.delta / 120), 'units')       
+            canva.yview_scroll(-1 * int(event.delta / 120), 'units')
         self.inner_frame.bind("<Configure>", lambda e: canva.configure(scrollregion=canva.bbox('all')))
         self.inner_frame.bind("<Enter>", lambda e: self.master.bind_all('<MouseWheel>', on_mousewheel))
         self.inner_frame.bind("<Leave>", lambda e: self.master.unbind_all('<MouseWheel>'))
