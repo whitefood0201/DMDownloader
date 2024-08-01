@@ -1,36 +1,47 @@
+""" IO functions of the program """
+
 import os
 import json
 
 def write_file(path: str, text: str) -> None:
+    """
+        Write a string to the giving file.
+        If the file already exists, will be overwritten.
+    """
     dir_check(path)
     try:
-        file = open(path, "w", encoding="UTF-8")
+        file = open(path, "w+", encoding="UTF-8")
         file.write(text)
         file.flush()
     except IOError:
         raise IOError("文件写入异常")
 
-def load_json(path: str) -> dict:
-    """ load a json file from giving path """
+def read_file(path: str) -> str:
+    """ Read the giving file. """
     try:
         file = open(path, "r", encoding="UTF-8")
-        result = json.loads(file.read())
-    except (IOError, json.JSONDecodeError):
-        #logging.warning("file not found: {}".format(path))
-        raise IOError("请检查文件")
+        result = file.read()
+    except IOError:
+        raise IOError("文件写入异常")
     
     return result
 
+def load_json(path: str) -> dict:
+    """ load a json file from giving path """
+    return json.loads(read_file(path))
+
 def write_json(path: str, data: dict) -> None:
-    """ write a json file to the giving path"""
+    """
+        Write a json file to the giving file.
+        If the file already exists, will be overwritten.
+    """
     dir_check(path)
-    try:
-        file = open(path, "w+", encoding="UTF-8")
-        file.write(json.dumps(data, indent=4))
-    except (IOError, json.JSONDecodeError):
-        #logging.warning("file not found: {}".format(path))
-        raise IOError("请检查文件")
+    write_file(path, json.dumps(data, indent=4))
     
 def dir_check(path: str) -> None:
-    dirpath = os.path.dirname(path)
+    """
+        Check the dir of the giving file.
+        If it doesn't, create it.
+    """
+    dirpath = os.path.dirname(os.path.abspath(path))
     if not os.path.exists(dirpath): os.mkdir(dirpath)
