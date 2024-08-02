@@ -44,17 +44,15 @@ class DownloaderApp(tk.Tk):
         # 初始化界面
         self.frames = {}
         height = len(favorites) <= 9 and 490 or 0
-        self.frames["setting_frame"] = VetcScrollFrame(lambda master: SettingFrame(master=master, controller=self), 800, 0, master=container)
-        #self.frames["setting_frame"] = SettingFrame(master=container, controller=self)
+        self.frames["setting_frame"] = cmp.VetcScrollFrame(lambda master: SettingFrame(master=master, controller=self), 800, 0, master=container)
         self.frames["waiting_frame"] = WaitingFrame(master=container, controller=self)
-        self.frames["main_frame"] = VetcScrollFrame(lambda master: MainFrame(master=master, favorites=favorites, controller=self), 800, height, master=container)
+        self.frames["main_frame"] = cmp.VetcScrollFrame(lambda master: MainFrame(master=master, favorites=favorites, controller=self), 800, height, master=container)
 
         self.frames["main_frame"].grid(row=0, column=0, sticky="nsew")
         self.frames["setting_frame"].grid(row=0, column=0, sticky="nsew")
         self.frames["waiting_frame"].grid(row=0, column=0, sticky="nsew")
 
         # 初始化 tk 异步任务处理对象
-        
         self.asyn_event = asyntk.AsyncEvent(self)
 
         self.show_frame("main_frame")
@@ -80,13 +78,14 @@ class DownloaderApp(tk.Tk):
                 }
         """
         height = len(anime_info["eps"]) <= 8 and 490 or 0
-        self.frames["anime_info"] = VetcScrollFrame(lambda master: AnimeFrame(master=master, anime_info=anime_info, controller=self), 800, height, master=self.container)
+        self.frames["anime_info"] = cmp.VetcScrollFrame(lambda master: AnimeFrame(master=master, anime_info=anime_info, controller=self), 800, height, master=self.container)
         self.frames["anime_info"].grid(row=0,column=0,sticky="nsew")
         self.show_frame("anime_info")
 
 class SettingFrame(ttk.Frame):
-    """ 初始界面，输入UserAgent和cookie """
+    
     def __init__(self, master=None, controller=None):
+        """ 初始界面，输入UserAgent和cookie """
         super().__init__(master, relief="sunken")
         self.master = master
         self.controller = controller
@@ -160,8 +159,8 @@ class SettingFrame(ttk.Frame):
 
 class MainFrame(ttk.Frame):
 
-    """ 主界面，提供搜索栏和收藏栏 """
     def __init__(self, master=None, controller=None, favorites=None):
+        """ 主界面，提供搜索栏和收藏栏 """
         super().__init__(master, relief="sunken")
         self.master = master
         self.controller = controller
@@ -214,8 +213,9 @@ class MainFrame(ttk.Frame):
 
 
 class AnimeFrame(ttk.Frame):
-    """ 动画展示及下载界面 """
+    
     def __init__(self, master=None, controller=None, anime_info=None):
+        """ 动画展示及下载界面 """
         super().__init__(master=master, relief="sunken")
         self.master = master
         self.controller = controller
@@ -235,7 +235,6 @@ class AnimeFrame(ttk.Frame):
         self.get_eps_frame(eps, site).pack()
         ttk.Label(master=self, text=" ").pack()
 
-
     def get_eps_frame(self, eps, site):
         eps_frame = ttk.Frame(self)
 
@@ -249,8 +248,8 @@ class AnimeFrame(ttk.Frame):
             btn.bind("<1>", handler)
             btn.pack()
 
-
             fra.pack(anchor="w", padx=50, pady=2)
+        
         return eps_frame
     
     def download(self, event, epid, ofile, site):
@@ -268,51 +267,25 @@ class AnimeFrame(ttk.Frame):
 
         widget.config(style="ep_button_downloading.TButton")
 
+
 class WaitingFrame(ttk.Frame):
-    """ 加载界面 """
+    
     def __init__(self, master=None, controller=None):
+        """ 加载界面 """
         super().__init__(master=master, relief="sunken")
         self.master = master
         self.controller = controller
-        text = tk.StringVar()
-        text.set("\n\n\n加载中")
+
+        text = tk.StringVar(value="\n\n\n加载中")
         self.label = ttk.Label(master=self, textvariable=text, style="waiting.TLabel")
 
         def reflash_text():
-            count = [0]
+            count = 0
             def reflash():
-                text.set("\n\n\n加载中" + "." * (count[0] % 4))
-                count[0] = count[0]+1
+                nonlocal count
+                text.set("\n\n\n加载中" + "." * (count % 4))
+                count += 1
                 self.label.after(500, reflash)
             return reflash
-
         self.label.after(0, reflash_text())
         self.label.pack()
-    
-# 带滚动条的Frame
-class VetcScrollFrame(ttk.Frame):
-    
-    ## 通过往canva上加frame(inner_frame)实现，为解决innerframe宽高需要手动传入宽高
-    def __init__(self, inner_frame, inner_frame_width, inner_frame_height, master=None):
-        super().__init__(master)
-        self.master = master
-
-        width = master.winfo_screenwidth()
-        height = master.winfo_screenheight()
-        canva = tk.Canvas(self,width=width, height=height, bg="gray")
-        scroll = ttk.Scrollbar(self, orient="vertical", command=canva.yview)
-        canva.config(yscrollcommand=scroll.set)
-
-        scroll.pack(side="right", fill="y")
-        canva.pack(side="left", fill="both", expand=True)
-
-        self.inner_frame = inner_frame(self)
-        ## canva上画inner_Frame，需要宽高
-        canva.create_window((0,0), window=self.inner_frame,  width=inner_frame_width, height=inner_frame_height)
-
-        # 通过以下方式调整canvas的scrollable区域
-        def on_mousewheel(event):
-            canva.yview_scroll(-1 * int(event.delta / 120), 'units')
-        self.inner_frame.bind("<Configure>", lambda e: canva.configure(scrollregion=canva.bbox('all')))
-        self.inner_frame.bind("<Enter>", lambda e: self.master.bind_all('<MouseWheel>', on_mousewheel))
-        self.inner_frame.bind("<Leave>", lambda e: self.master.unbind_all('<MouseWheel>'))

@@ -43,3 +43,32 @@ def optBox(master: tk.Misc, labelText: str, bindVar: tk.BooleanVar, font, style:
     opt.set(bindVar.get())
     opt.pack(pady=10)
     return fra
+
+
+class VetcScrollFrame(ttk.Frame):
+    
+    ## 通过往canva上加frame(inner_frame)实现，为解决innerframe宽高需要手动传入宽高
+    def __init__(self, inner_frame, inner_frame_width, inner_frame_height, master=None):
+        """ 带滚动条的Frame """
+        super().__init__(master)
+        self.master = master
+
+        width = master.winfo_screenwidth()
+        height = master.winfo_screenheight()
+        canva = tk.Canvas(self,width=width, height=height, bg="gray")
+        scroll = ttk.Scrollbar(self, orient="vertical", command=canva.yview)
+        canva.config(yscrollcommand=scroll.set)
+
+        scroll.pack(side="right", fill="y")
+        canva.pack(side="left", fill="both", expand=True)
+
+        self.inner_frame = inner_frame(self)
+        ## canva上画inner_Frame，需要宽高
+        canva.create_window((0,0), window=self.inner_frame,  width=inner_frame_width, height=inner_frame_height)
+
+        # 通过以下方式调整canvas的scrollable区域
+        def on_mousewheel(event):
+            canva.yview_scroll(-1 * int(event.delta / 120), 'units')
+        self.inner_frame.bind("<Configure>", lambda e: canva.configure(scrollregion=canva.bbox('all')))
+        self.inner_frame.bind("<Enter>", lambda e: self.master.bind_all('<MouseWheel>', on_mousewheel))
+        self.inner_frame.bind("<Leave>", lambda e: self.master.unbind_all('<MouseWheel>'))
