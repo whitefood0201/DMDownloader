@@ -9,6 +9,7 @@
 - 添加开关类设置
 - 添加数字类设置
 - 添加文本类设置
+- 将所有配置放入设置页面
 
 ### Changed
 - 将`download_origin`设置更名为`download_raw`
