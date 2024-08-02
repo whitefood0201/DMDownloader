@@ -14,7 +14,7 @@ Convert the raw danmaku data to a loadable ass file. Only support `Bilibili` and
 --font_size=[int]           The font size, deafault 50px.
 --resolution=[int*int]      The resolution of video, default "1920*1080".
 --font_name=[str]           Font.
---ass_head=[str]            The path will the ass head be, default "./resource/head.txt".
+--ass_head=[str]            The path will the ass head be, default ".\\resource\\head.txt".
 --suffix=[str]              The suffix will add to the out file, default ".dm-chs".    
 '''
 
@@ -28,7 +28,7 @@ CONFIG = {
     "font_size": 50,
     "resolution": "1920*1080",
     "font_name": "微软雅黑",
-    "ass_head": "./resource/head.txt",
+    "ass_head": ".\\resource\\head.txt",
     "suffix": ".dm-chs",
     "ifile": "",
     "ofile": ""

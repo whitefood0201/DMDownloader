@@ -13,7 +13,8 @@ def write_file(path: str, text: str) -> None:
         file = open(path, "w+", encoding="UTF-8")
         file.write(text)
         file.flush()
-    except IOError:
+    except IOError as e:
+        print(e.args)
         raise IOError("文件写入异常")
 
 def read_file(path: str) -> str:
@@ -21,7 +22,8 @@ def read_file(path: str) -> str:
     try:
         file = open(path, "r", encoding="UTF-8")
         result = file.read()
-    except IOError:
+    except IOError as e:
+        print(e.args)
         raise IOError("文件写入异常")
     
     return result
@@ -45,3 +47,8 @@ def dir_check(path: str) -> None:
     """
     dirpath = os.path.dirname(os.path.abspath(path))
     if not os.path.exists(dirpath): os.mkdir(dirpath)
+
+def copy_to(scr, dest) -> None:
+    """ Copy the scr to the dest """
+    text = read_file(scr)
+    write_file(dest, text)
