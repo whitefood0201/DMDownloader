@@ -12,11 +12,7 @@ def create_file(global_config: dict, dialogues: list[Dialogue]) -> tuple[str, di
     head = get_header(global_config)
     text = "\n".join(fl.map(str, dialogues))
 
-    fs.dir_check(global_config["ofile"])
-    with open(ofile, "w", encoding="UTF-8") as file:
-        file.write(head)
-        file.write(text)
-        file.flush()
+    fs.write_file(ofile, head+text)
 
     ''' return ofile name '''
     return ofile, {"ifile":global_config["ifile"], "ofile":ofile}

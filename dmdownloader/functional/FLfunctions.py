@@ -1,3 +1,8 @@
+"""
+Funcional Programing module     
+Content some basic function.
+"""
+
 '''
 # 为什么python不支持尾递归优化
 import sys
@@ -53,17 +58,44 @@ def reduceRight(callback, arr, initValue=None):
 
     return initValue
 
-# 将不需要index的函数适配于reduce函数
 def reduceAdaptor(func):
+    """
+        Add `index` param to the function, to adapt the `reduce()`  
+        Also see: `reduce()`    
+    """
     return lambda pre, curr, index : func(pre, curr)
 
 def map(callback, arr):
+    """
+        Map for list   
+        Reduce the list, extract elem   
+
+        `def callback(elem)`
+    """
     def do(pre, curr, index):
         pre.append(callback(curr))
         return pre
     return reduce(do, arr, [])
 
+def dict_map(callback, dict):
+    """
+        Map for dict   
+        Reduce the dict, extract the key & the value    
+
+        `def callback(key, value)`
+    """
+    def do(pre, key):
+        pre[key] = callback(key, dict[key])
+        return pre
+    return reduce(reduceAdaptor(do), list(dict.keys()), {})
+
 def filter(callback, arr):
+    """
+        filter for list   
+        remove the element that passed the condition    
+
+        `def callback(elem) -> Bool`
+    """
     def do(pre, curr, index):
         if(not callback(curr)):
             pre.append(curr)
@@ -90,11 +122,19 @@ def curry(func, ignorableArgs=0, args=None):
 def sort(callback, arr: list):
     return sorted(arr, key=callback)
 
-# can't use the initValue
-# To use the initValue, try lambda:
-#   lambda initValue: fl.reduce(func, arr, initValue)
+
 curried_reduce = lambda func: curry(reduce, 1)(func)
+"""
+can't use the initValue     
+To use the initValue, try lambda:   
+    lambda initValue: fl.reduce(func, arr, initValue)   
+"""
 curried_reduceRight = lambda func: curry(reduceRight, 1)(func)
+"""
+can't use the initValue     
+To use the initValue, try lambda:   
+    lambda initValue: fl.reduceRight(func, arr, initValue)   
+"""
 curried_map = lambda func: curry(map)(func)
 curried_filter = lambda func: curry(filter)(func)
 curried_sort = lambda func: curry(sort)(func)

@@ -20,7 +20,7 @@ DEAFAULT_GLOBAL_CONFIG =  {
     "font_name": "微软雅黑",  
     "ass_head": "./resource/head.txt",
     "suffix": ".dm-chs",  
-    "download_origin": False, 
+    "download_raw": False, 
     "download_path":"./downloads/",
     "user_agent": "",
     "cookie": ""
@@ -40,7 +40,7 @@ def main():
         global_config:dict = fs.load_json(CONFIG_PATH)
     except IOError:
         msg.showerror(title="错误", message="配置文件载入错误，使用默认配置")
-        global_config:dict = DEAFAULT_GLOBAL_CONFIG
+        global_config:dict = DEAFAULT_GLOBAL_CONFIG.copy
 
     # 载入favorites
     favorites = {}
