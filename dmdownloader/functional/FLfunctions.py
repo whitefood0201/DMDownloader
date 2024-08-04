@@ -122,6 +122,16 @@ def curry(func, ignorableArgs=0, args=None):
 def sort(callback, arr: list):
     return sorted(arr, key=callback)
 
+def concat(arr:list):
+    """
+        Concatenate a list of lists into a list.    
+        [[a]] -> [a]
+    """
+    def do(pre, curr):
+        pre += curr if isinstance(curr, list) else [curr]
+        return pre
+    return reduce(reduceAdaptor(do), arr, [])
+
 
 curried_reduce = lambda func: curry(reduce, 1)(func)
 """

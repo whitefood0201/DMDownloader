@@ -65,18 +65,6 @@ class DownloaderApp(tk.Tk):
         frame.tkraise()
 
     def create_anime_info_frame(self, anime_info):
-        """ 
-            创建 AnimeFrame，根据anime_info。
-            anime_info 格式为：
-                {
-                    "title": "title", 
-                    "from": "", # baha or bili
-                    "eps": {
-                        "ep_title": "epid",
-                        ...
-                    }
-                }
-        """
         height = len(anime_info["eps"]) <= 8 and 490 or 0
         self.frames["anime_info"] = cmp.VetcScrollFrame(lambda master: AnimeFrame(master=master, anime_info=anime_info, controller=self), 800, height, master=self.container)
         self.frames["anime_info"].grid(row=0,column=0,sticky="nsew")
@@ -236,12 +224,27 @@ class AnimeFrame(ttk.Frame):
         ttk.Label(master=self, text=" ").pack()
 
     def get_eps_frame(self, eps, site):
+        """ 
+            根据`anime_info`创建
+            anime_info 格式为：
+            ```
+                {
+                    "title": "title", 
+                    "from": "", # baha or bili
+                    "eps": [{
+                        "title": title,
+                        "id": id},
+                        {...
+                    ]
+                }
+            ```
+        """
         eps_frame = ttk.Frame(self)
 
-        for ep in eps.keys():
+        for ep in eps:
             fra = ttk.Frame(self)
-            epid = eps[ep]
-            ttk.Label(master=fra, text=ep, width=50, style="ep_title.TLabel").pack(side="left", padx=10)
+            epid = ep["id"]
+            ttk.Label(master=fra, text=ep["title"], width=50, style="ep_title.TLabel").pack(side="left", padx=10)
             def handler(event, epid=epid, ofile=ep, site=site):
                 self.download(event, epid, ofile, site)
             btn = ttk.Button(master=fra, text="下载", width=6, style="ep_button.TButton")
