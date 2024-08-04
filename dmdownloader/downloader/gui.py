@@ -97,7 +97,7 @@ class SettingFrame(ttk.Frame):
 
         def save(config: dict):
             def do(key: str, var: tk.Variable) -> None:
-                config[key] = var.get()
+                config[key] = var.get() if not isinstance(var, tk.StringVar) else str.strip(var.get())
             return do
         save_config = lambda: fl.dict_map(save(self.global_config), vars)
 
