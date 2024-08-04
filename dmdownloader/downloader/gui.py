@@ -244,9 +244,10 @@ class AnimeFrame(ttk.Frame):
         for ep in eps:
             fra = ttk.Frame(self)
             epid = ep["id"]
-            ttk.Label(master=fra, text=ep["title"], width=50, style="ep_title.TLabel").pack(side="left", padx=10)
-            def handler(event, epid=epid, ofile=ep, site=site):
-                self.download(event, epid, ofile, site)
+            title = ep["title"]
+            ttk.Label(master=fra, text=title, width=50, style="ep_title.TLabel").pack(side="left", padx=10)
+            def handler(event):
+                self.download(event, epid, title, site)
             btn = ttk.Button(master=fra, text="下载", width=6, style="ep_button.TButton")
             btn.bind("<1>", handler)
             btn.pack()
