@@ -97,7 +97,7 @@ class SettingFrame(ttk.Frame):
 
         def save(config: dict):
             def do(key: str, var: tk.Variable) -> None:
-                config[key] = var.get()
+                config[key] = var.get() if not isinstance(var, tk.StringVar) else str.strip(var.get())
             return do
         save_config = lambda: fl.dict_map(save(self.global_config), vars)
 
@@ -246,8 +246,8 @@ class AnimeFrame(ttk.Frame):
             epid = ep["id"]
             title = ep["title"]
             ttk.Label(master=fra, text=title, width=50, style="ep_title.TLabel").pack(side="left", padx=10)
-            def handler(event):
-                self.download(event, epid, title, site)
+            def handler(event, id=epid, title=title, site=site):
+                self.download(event, id, title, site)
             btn = ttk.Button(master=fra, text="下载", width=6, style="ep_button.TButton")
             btn.bind("<1>", handler)
             btn.pack()

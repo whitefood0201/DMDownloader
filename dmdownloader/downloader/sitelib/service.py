@@ -58,7 +58,7 @@ def download(vid: str, site: str, ofile: str, config: dict) -> None:
         raise ValueError("未知网站")
 
     # converter module
-    if config["download_origin"]:
+    if config["download_raw"]:
         path = ofile + (site == "bili" and ".xml" or ".json")
         fs.write_file(path, text)
         print('下载完毕: "{}" -----> "{}"'.format(ifile, path))
