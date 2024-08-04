@@ -1,8 +1,10 @@
 import sys
+from json.decoder import JSONDecodeError
 from datetime import datetime
 import tkinter.messagebox as msg
 import dmdownloader.downloader.gui as gui
 import dmdownloader.functional.fileservice as fs
+
 
 LOG = False
 FAVORITES_PATH = ".\\resource\\favorites.json"
@@ -49,8 +51,8 @@ def main():
     favorites = {}
     try:
         favorites = fs.load_json(FAVORITES_PATH)
-    except IOError:
-        pass
+    except (IOError, JSONDecodeError) as e:
+        print(e.args)
 
     root = gui.DownloaderApp(cfg=global_config, favorites=favorites)
     root.mainloop()
