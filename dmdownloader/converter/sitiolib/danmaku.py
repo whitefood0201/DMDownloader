@@ -30,7 +30,7 @@ def bili_generate(data: tuple) -> dict:
     attrs = attr_str.split(",")
 
     dmk["time"] = int(float(attrs[0]) * 1000) # b站单位秒，float类型
-    dmk["color"] = hex(int(attrs[3])) # b站为十进制RGB888，int类型
+    dmk["color"] = hex(int(attrs[3]))[2:] # b站为十进制RGB888，int类型
     type = -1
     match(int(attrs[1])):
         case 1|2|3|6: type = 0
